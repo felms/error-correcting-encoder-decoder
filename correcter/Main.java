@@ -11,10 +11,15 @@ public class Main {
         String input = scanner.nextLine();
 
         System.out.println(input);
+
         String encodedMessage = encodeMessage(input);
         System.out.println(encodedMessage);
+
         String errorMessage = emulateError(encodedMessage);
         System.out.println(errorMessage);
+
+        String decoded = decodeMessage(errorMessage);
+        System.out.println(decoded);
 
     }
 
@@ -29,6 +34,22 @@ public class Main {
         }
 
         return sb.toString();
+    }
+
+    public static String decodeMessage(String input) {
+        StringBuilder output = new StringBuilder();
+
+        for(int i = 0; i < input.length(); i += 3) {
+            char a = input.charAt(i);
+            char b = input.charAt(i + 1);
+            char c = input.charAt(i + 2);
+
+            char o = (a == b || a == c) ? a : b;
+            
+            output.append(o);
+        }
+
+        return output.toString();
     }
 
     public static String emulateError(String input) {
