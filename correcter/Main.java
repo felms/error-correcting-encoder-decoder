@@ -10,8 +10,25 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
 
-        System.out.println(emulateError(input));
+        System.out.println(input);
+        String encodedMessage = encodeMessage(input);
+        System.out.println(encodedMessage);
+        String errorMessage = emulateError(encodedMessage);
+        System.out.println(errorMessage);
 
+    }
+
+    public static String encodeMessage(String input) {
+
+        StringBuilder sb = new StringBuilder();
+
+        for(char c : input.toCharArray()) {
+            sb.append(c);
+            sb.append(c);
+            sb.append(c);
+        }
+
+        return sb.toString();
     }
 
     public static String emulateError(String input) {
@@ -22,10 +39,11 @@ public class Main {
         StringBuilder output = new StringBuilder();
 
         for (int i = 0; i < input.length(); i += 3) {
-            String subString = i + 3 > input.length() ? input.substring(i) : input.substring(i, i + 3);
+            StringBuilder subString = new StringBuilder(i + 3 > input.length() 
+                                                        ? input.substring(i) : input.substring(i, i + 3));
             int pos = random.nextInt(3);
             char error = alphabet.charAt(random.nextInt(alphabetLength));
-            subString = subString.replace(subString.charAt(pos), error);
+            subString.setCharAt(pos, error);
 
             output.append(subString);
         }
