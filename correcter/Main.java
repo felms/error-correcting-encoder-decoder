@@ -1,26 +1,29 @@
 package correcter;
 
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import java.util.Random;
-import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        
-        Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
 
-        System.out.println(input);
+        String inputFile = "send.txt";
+        String outputFile = "received.txt";
 
-        String encodedMessage = encodeMessage(input);
-        System.out.println(encodedMessage);
+        try(FileInputStream inputStream = new FileInputStream(inputFile);
+            FileOutputStream outputStream = new FileOutputStream(outputFile)){
 
-        String errorMessage = emulateError(encodedMessage);
-        System.out.println(errorMessage);
+            byte[] input = inputStream.readAllBytes();
+            byte[] output = emulateError(input);
+            outputStream.write(output);
 
-        String decoded = decodeMessage(errorMessage);
-        System.out.println(decoded);
-
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
 
     public static String encodeMessage(String input) {
@@ -45,30 +48,23 @@ public class Main {
             char c = input.charAt(i + 2);
 
             char o = (a == b || a == c) ? a : b;
-            
+
             output.append(o);
         }
 
         return output.toString();
     }
 
-    public static String emulateError(String input) {
+    public static byte[] emulateError(byte[] input) {
 
-        String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789";
-        int alphabetLength = alphabet.length();
         Random random = new Random();
-        StringBuilder output = new StringBuilder();
+        byte[] output = new byte[input.length];
+        for (int i = 0; i < input.length; i++) {
+            int r = random.nextInt(8);
 
-        for (int i = 0; i < input.length(); i += 3) {
-            StringBuilder subString = new StringBuilder(i + 3 > input.length() 
-                                                        ? input.substring(i) : input.substring(i, i + 3));
-            int pos = random.nextInt(3);
-            char error = alphabet.charAt(random.nextInt(alphabetLength));
-            subString.setCharAt(pos, error);
-
-            output.append(subString);
+            output[i] = (byte) (input[i] ^ (1 << r));
         }
 
-        return output.toString();
+        return output;
     }
 }
